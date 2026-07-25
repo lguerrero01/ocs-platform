@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { AuthService } from './auth.service';
 import {
@@ -192,7 +192,24 @@ export class DatosService {
       .select('*, perfiles!solicitudes_admision_usuario_id_fkey(nombre_usuario, correo)')
       .eq('estatus', 'pendiente')
       .order('fecha_solicitud', { ascending: true });
-    return (data ?? []) as SolicitudAdmision[];
+    const solicitudes = (data ?? []) as SolicitudAdmision[];
+    this.postulantesPendientes.set(solicitudes.length);
+    return solicitudes;
+  }
+
+  /**
+   * Cuántos postulantes esperan decisión. Vive aquí y no en el componente de
+   * solicitudes porque el aviso se muestra en la navegación, que sigue montada
+   * mientras el admin trabaja en otra pestaña.
+   */
+  readonly postulantesPendientes = signal(0);
+
+  async refrescarPostulantesPendientes(): Promise<void> {
+    const { count } = await this.db
+      .from('solicitudes_admision')
+      .select('id', { count: 'exact', head: true })
+      .eq('estatus', 'pendiente');
+    this.postulantesPendientes.set(count ?? 0);
   }
 
   async historialSolicitudes(): Promise<SolicitudAdmision[]> {

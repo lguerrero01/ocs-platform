@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { CarritoService } from '../../core/carrito.service';
+import { DatosService } from '../../core/datos.service';
 import { IconoComponent, NombreIcono } from '../../shared/icono.component';
 import { LogoComponent } from '../../shared/logo.component';
 
@@ -26,9 +27,16 @@ import { LogoComponent } from '../../shared/logo.component';
           @for (item of navegacion; track item.ruta) {
             <a
               [routerLink]="item.ruta"
-              routerLinkActive="bg-ocs-bg text-ocs-accent"
+              routerLinkActive
+              #rla="routerLinkActive"
               [routerLinkActiveOptions]="{ exact: item.ruta === '/' }"
-              class="px-3 py-2.5 rounded-lg text-sm text-ocs-muted hover:text-ocs-text hover:bg-ocs-elevated flex items-center gap-2.5 transition-colors duration-200 cursor-pointer"
+              [attr.aria-current]="rla.isActive ? 'page' : null"
+              class="px-3 py-2.5 rounded-lg text-sm flex items-center gap-2.5 transition-colors duration-200 cursor-pointer border-l-2"
+              [class]="
+                rla.isActive
+                  ? 'bg-ocs-bg text-ocs-accent font-medium border-ocs-accent'
+                  : 'text-ocs-muted border-transparent hover:text-ocs-text hover:bg-ocs-elevated'
+              "
             >
               <app-icono [nombre]="item.icono" />
               <span>{{ item.etiqueta }}</span>
@@ -36,14 +44,33 @@ import { LogoComponent } from '../../shared/logo.component';
           }
 
           @if (auth.esAdmin()) {
-            <a
-              routerLink="/admin"
-              routerLinkActive="bg-ocs-bg text-ocs-accent"
-              class="px-3 py-2.5 rounded-lg text-sm text-ocs-muted hover:text-ocs-text hover:bg-ocs-elevated flex items-center gap-2.5 mt-4 border-t border-ocs-border pt-4 transition-colors duration-200 cursor-pointer"
-            >
-              <app-icono nombre="admin" />
-              <span>Administración</span>
-            </a>
+            <div class="mt-4 border-t border-ocs-border pt-4">
+              <a
+                routerLink="/admin"
+                routerLinkActive
+                #rlaAdmin="routerLinkActive"
+                [attr.aria-current]="rlaAdmin.isActive ? 'page' : null"
+                class="px-3 py-2.5 rounded-lg text-sm flex items-center gap-2.5 transition-colors duration-200 cursor-pointer border-l-2"
+                [class]="
+                  rlaAdmin.isActive
+                    ? 'bg-ocs-bg text-ocs-accent font-medium border-ocs-accent'
+                    : 'text-ocs-muted border-transparent hover:text-ocs-text hover:bg-ocs-elevated'
+                "
+              >
+                <app-icono nombre="admin" />
+                <span class="flex-1">Administración</span>
+                @if (datos.postulantesPendientes() > 0) {
+                  <span
+                    class="min-w-5 h-5 px-1.5 rounded-full bg-ocs-accent text-ocs-bg text-[11px] font-semibold flex items-center justify-center"
+                    [attr.aria-label]="
+                      datos.postulantesPendientes() + ' solicitudes esperando decisión'
+                    "
+                  >
+                    {{ datos.postulantesPendientes() }}
+                  </span>
+                }
+              </a>
+            </div>
           }
         </nav>
 
@@ -94,9 +121,16 @@ import { LogoComponent } from '../../shared/logo.component';
           @for (item of navegacion; track item.ruta) {
             <a
               [routerLink]="item.ruta"
-              routerLinkActive="text-ocs-accent"
+              routerLinkActive
+              #rlaMovil="routerLinkActive"
               [routerLinkActiveOptions]="{ exact: item.ruta === '/' }"
-              class="flex-1 flex flex-col items-center justify-center gap-1 min-h-[56px] py-2 text-ocs-muted text-[10px] transition-colors duration-200"
+              [attr.aria-current]="rlaMovil.isActive ? 'page' : null"
+              class="flex-1 flex flex-col items-center justify-center gap-1 min-h-[56px] py-2 text-[10px] transition-colors duration-200 border-t-2 cursor-pointer"
+              [class]="
+                rlaMovil.isActive
+                  ? 'text-ocs-accent font-medium border-ocs-accent bg-ocs-accent/5'
+                  : 'text-ocs-muted border-transparent'
+              "
             >
               <app-icono [nombre]="item.icono" [tamano]="22" />
               <span>{{ item.etiqueta }}</span>
@@ -105,11 +139,28 @@ import { LogoComponent } from '../../shared/logo.component';
           @if (auth.esAdmin()) {
             <a
               routerLink="/admin"
-              routerLinkActive="text-ocs-accent"
-              class="flex-1 flex flex-col items-center justify-center gap-1 min-h-[56px] py-2 text-ocs-muted text-[10px] transition-colors duration-200"
+              routerLinkActive
+              #rlaAdminMovil="routerLinkActive"
+              [attr.aria-current]="rlaAdminMovil.isActive ? 'page' : null"
+              class="relative flex-1 flex flex-col items-center justify-center gap-1 min-h-[56px] py-2 text-[10px] transition-colors duration-200 border-t-2 cursor-pointer"
+              [class]="
+                rlaAdminMovil.isActive
+                  ? 'text-ocs-accent font-medium border-ocs-accent bg-ocs-accent/5'
+                  : 'text-ocs-muted border-transparent'
+              "
             >
               <app-icono nombre="admin" [tamano]="22" />
               <span>Admin</span>
+              @if (datos.postulantesPendientes() > 0) {
+                <span
+                  class="absolute top-1.5 right-1/4 translate-x-1/2 min-w-4 h-4 px-1 rounded-full bg-ocs-accent text-ocs-bg text-[10px] font-semibold flex items-center justify-center"
+                  [attr.aria-label]="
+                    datos.postulantesPendientes() + ' solicitudes esperando decisión'
+                  "
+                >
+                  {{ datos.postulantesPendientes() }}
+                </span>
+              }
             </a>
           }
         </nav>
@@ -117,10 +168,17 @@ import { LogoComponent } from '../../shared/logo.component';
     </div>
   `,
 })
-export class ShellComponent {
+export class ShellComponent implements OnInit {
   readonly auth = inject(AuthService);
   readonly carrito = inject(CarritoService);
+  readonly datos = inject(DatosService);
   private readonly router = inject(Router);
+
+  async ngOnInit(): Promise<void> {
+    // Solo un admin puede leer solicitudes; para el resto RLS devolvería 0 igual,
+    // pero no tiene sentido gastar la consulta.
+    if (this.auth.esAdmin()) await this.datos.refrescarPostulantesPendientes();
+  }
 
   readonly navegacion: { ruta: string; etiqueta: string; icono: NombreIcono }[] = [
     { ruta: '/', etiqueta: 'Inicio', icono: 'inicio' },
