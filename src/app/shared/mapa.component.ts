@@ -65,18 +65,29 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
 
   async ngAfterViewInit(): Promise<void> {
     try {
-      this.leaflet = await import('leaflet');
+      /**
+       * Leaflet 1.x se publica como UMD. El servidor de desarrollo interopera y
+       * expone los nombres directamente, pero el bundle de producción devuelve
+       * el módulo con todo colgando de `default`: sin esto, `L.map` no existe
+       * y el mapa solo falla una vez desplegado.
+       */
+      const modulo: Record<string, unknown> = await import('leaflet');
+      this.leaflet = (modulo['default'] ?? modulo) as typeof L;
     } catch {
       this.fallo.set('No se pudo cargar el mapa.');
       return;
     }
 
-    const L = this.leaflet;
+    const lf = this.leaflet;
+    if (!lf || typeof lf.map !== 'function') {
+      this.fallo.set('No se pudo cargar el mapa.');
+      return;
+    }
     const acento =
       getComputedStyle(document.documentElement).getPropertyValue('--ocs-accent').trim() ||
       '#b78b4c';
 
-    this.mapa = L.map(this.lienzo().nativeElement, {
+    this.mapa = lf.map(this.lienzo().nativeElement, {
       center: [this.lat(), this.lng()],
       zoom: this.zoom(),
       // El scroll del ratón sobre un mapa embebido secuestra el de la página.
@@ -84,12 +95,12 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
       attributionControl: true,
     });
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    lf.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap',
     }).addTo(this.mapa);
 
-    this.marcador = L.circleMarker([this.lat(), this.lng()], {
+    this.marcador = lf.circleMarker([this.lat(), this.lng()], {
       radius: 8,
       color: acento,
       weight: 3,
@@ -97,7 +108,7 @@ export class MapaComponent implements AfterViewInit, OnDestroy {
       fillOpacity: 0.35,
     }).addTo(this.mapa);
 
-    if (this.etiqueta()) this.marcador.bindPopup(this.etiqueta());
+    if (this.etiqueta()) this.marcador?.bindPopup(this.etiqueta());
 
     /**
      * Leaflet mide el contenedor al crearse y cachea ese tamaño. Si todavía no
