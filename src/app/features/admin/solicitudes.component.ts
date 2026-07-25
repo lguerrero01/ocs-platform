@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatosService } from '../../core/datos.service';
-import { PREGUNTAS_ADMISION, SolicitudAdmision } from '../../core/models';
+import { SECCIONES_ADMISION, SolicitudAdmision } from '../../core/models';
 
 /**
  * Bandeja de solicitudes. Al decidir se llama a la Edge Function, que registra
@@ -48,16 +48,27 @@ import { PREGUNTAS_ADMISION, SolicitudAdmision } from '../../core/models';
               </span>
             </div>
 
-            <dl class="space-y-2 mb-4 text-sm border-t border-ocs-border pt-3">
-              @for (p of preguntas; track p.clave) {
-                <div>
-                  <dt class="text-xs text-ocs-muted">{{ p.etiqueta }}</dt>
-                  <dd class="whitespace-pre-line">
-                    {{ s.respuestas_formulario[p.clave] || '—' }}
-                  </dd>
-                </div>
+            <div class="mb-4 border-t border-ocs-border pt-3 space-y-4">
+              @for (seccion of secciones; track seccion.clave) {
+                <section>
+                  <h3
+                    class="text-xs font-semibold uppercase tracking-wide text-ocs-accent mb-2"
+                  >
+                    {{ seccion.titulo }}
+                  </h3>
+                  <dl class="grid gap-2 sm:grid-cols-2 text-sm">
+                    @for (p of seccion.campos; track p.clave) {
+                      <div>
+                        <dt class="text-xs text-ocs-muted">{{ p.etiqueta }}</dt>
+                        <dd class="whitespace-pre-line">
+                          {{ s.respuestas_formulario[p.clave] || '—' }}
+                        </dd>
+                      </div>
+                    }
+                  </dl>
+                </section>
               }
-            </dl>
+            </div>
 
             <input
               [(ngModel)]="motivos[s.id]"
@@ -117,7 +128,7 @@ import { PREGUNTAS_ADMISION, SolicitudAdmision } from '../../core/models';
 export class AdminSolicitudesComponent implements OnInit {
   private readonly datos = inject(DatosService);
 
-  readonly preguntas = PREGUNTAS_ADMISION;
+  readonly secciones = SECCIONES_ADMISION;
   readonly pendientes = signal<SolicitudAdmision[]>([]);
   readonly historial = signal<SolicitudAdmision[]>([]);
   readonly vista = signal<'pendientes' | 'historial'>('pendientes');

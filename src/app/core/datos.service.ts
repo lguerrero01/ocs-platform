@@ -258,7 +258,15 @@ export class DatosService {
 
   async canjearCodigoQr(codigo: string) {
     const { data, error } = await this.db.rpc('canjear_codigo_qr', { p_codigo: codigo });
-    return { data: data as { valido: boolean; motivo?: string } | null, error };
+    return {
+      data: data as {
+        valido: boolean;
+        motivo?: string;
+        codigo_id?: string;
+        numero_aspirante?: number;
+      } | null,
+      error,
+    };
   }
 
   async inhabilitarCodigo(id: string): Promise<void> {

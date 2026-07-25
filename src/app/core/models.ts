@@ -38,6 +38,8 @@ export interface CodigoQr {
   inhabilitado_at: string | null;
   expira_at: string;
   creado_at: string;
+  /** Correlativo del aspirante. Se asigna al emitir el código, no al registrarse. */
+  numero_aspirante: number;
 }
 
 export interface SolicitudAdmision {
@@ -120,10 +122,101 @@ export interface ItemCarrito {
   cantidad: number;
 }
 
-/** Preguntas del formulario de admisión. Editables sin tocar el resto del código. */
-export const PREGUNTAS_ADMISION: { clave: string; etiqueta: string; tipo: 'texto' | 'area' }[] = [
-  { clave: 'motivacion', etiqueta: '¿Por qué quieres unirte?', tipo: 'area' },
-  { clave: 'referencia', etiqueta: '¿Quién te refirió?', tipo: 'texto' },
-  { clave: 'experiencia', etiqueta: 'Cuéntanos tu experiencia relevante', tipo: 'area' },
-  { clave: 'disponibilidad', etiqueta: '¿Qué disponibilidad tienes?', tipo: 'texto' },
+export type TipoCampo = 'texto' | 'area' | 'fecha' | 'si_no' | 'email' | 'telefono';
+
+export interface CampoAdmision {
+  clave: string;
+  etiqueta: string;
+  tipo: TipoCampo;
+  /**
+   * Marcar como requerido solo lo que todo aspirante puede responder. Las
+   * preguntas condicionales (nombres de hermanos, de pareja, de hijos) quedan
+   * opcionales: exigirlas dejaría fuera a quien no tiene ninguno.
+   */
+  requerido?: boolean;
+}
+
+export interface SeccionAdmision {
+  clave: string;
+  titulo: string;
+  campos: CampoAdmision[];
+}
+
+/**
+ * Formulario de admisión, agrupado en las secciones que lee el admin antes de
+ * decidir. Editable sin tocar el resto del código: el registro y la vista de
+ * solicitudes se generan a partir de esta estructura.
+ */
+export const SECCIONES_ADMISION: SeccionAdmision[] = [
+  {
+    clave: 'personal',
+    titulo: 'Personal',
+    campos: [
+      { clave: 'nombres_apellidos', etiqueta: 'Nombres y apellidos', tipo: 'texto', requerido: true },
+      { clave: 'fecha_nacimiento', etiqueta: 'Fecha de nacimiento', tipo: 'fecha', requerido: true },
+      { clave: 'lugar_nacimiento', etiqueta: 'Lugar de nacimiento', tipo: 'texto', requerido: true },
+      { clave: 'nacionalidad', etiqueta: 'Nacionalidad', tipo: 'texto', requerido: true },
+      { clave: 'ci', etiqueta: 'CI', tipo: 'texto', requerido: true },
+      { clave: 'telefono', etiqueta: 'Nro. de teléfono', tipo: 'telefono', requerido: true },
+      { clave: 'telefono_emergencia', etiqueta: 'Nro. de emergencia', tipo: 'telefono', requerido: true },
+      { clave: 'correo_contacto', etiqueta: 'Correo', tipo: 'email', requerido: true },
+      { clave: 'direccion', etiqueta: 'Dirección completa', tipo: 'area', requerido: true },
+      { clave: 'tipo_sangre', etiqueta: 'Tipo de sangre', tipo: 'texto' },
+      { clave: 'altura', etiqueta: 'Tu altura', tipo: 'texto' },
+      { clave: 'peso', etiqueta: 'Tu peso', tipo: 'texto' },
+      { clave: 'discapacidad', etiqueta: '¿Tienes alguna discapacidad o limitación?', tipo: 'area' },
+      { clave: 'enfermedad', etiqueta: '¿Padeces alguna enfermedad?', tipo: 'area' },
+      { clave: 'alergias', etiqueta: '¿Sufres de alergias?', tipo: 'area' },
+      { clave: 'medicamentos', etiqueta: '¿Tomas medicamentos regularmente?', tipo: 'area' },
+    ],
+  },
+  {
+    clave: 'familiar',
+    titulo: 'Familiar',
+    campos: [
+      { clave: 'tiene_padres', etiqueta: '¿Tienes padres?', tipo: 'si_no' },
+      { clave: 'padres_vivos', etiqueta: '¿Están vivos?', tipo: 'texto' },
+      { clave: 'padres_nombres', etiqueta: '¿Cuáles son sus nombres?', tipo: 'texto' },
+      { clave: 'padres_viven_contigo', etiqueta: '¿Viven contigo?', tipo: 'si_no' },
+      { clave: 'tiene_hermanos', etiqueta: '¿Tienes hermanos?', tipo: 'si_no' },
+      { clave: 'hermanos_nombres', etiqueta: '¿Cuáles son sus nombres?', tipo: 'texto' },
+      { clave: 'hermanos_viven_contigo', etiqueta: '¿Viven contigo?', tipo: 'si_no' },
+      { clave: 'tiene_pareja', etiqueta: '¿Tienes esposa/novia/concubina?', tipo: 'si_no' },
+      { clave: 'pareja_nombre', etiqueta: '¿Cuál es su nombre?', tipo: 'texto' },
+      { clave: 'tiene_hijos', etiqueta: '¿Tienes hijos?', tipo: 'si_no' },
+      { clave: 'hijos_nombres', etiqueta: '¿Cuáles son sus nombres?', tipo: 'texto' },
+    ],
+  },
+  {
+    clave: 'academico',
+    titulo: 'Académico',
+    campos: [
+      { clave: 'ocupacion', etiqueta: '¿Ocupación actual, trabajo o estudio?', tipo: 'texto', requerido: true },
+      { clave: 'nivel_academico', etiqueta: '¿Nivel académico?', tipo: 'texto', requerido: true },
+      { clave: 'habilidades', etiqueta: '¿Habilidades o experticias útiles?', tipo: 'area' },
+      {
+        clave: 'organizaciones',
+        etiqueta: '¿Has pertenecido o perteneces a una organización de cualquier índole?',
+        tipo: 'area',
+      },
+    ],
+  },
+  {
+    clave: 'interes',
+    titulo: 'De interés',
+    campos: [
+      { clave: 'antecedentes', etiqueta: '¿Tienes antecedentes penales o legales?', tipo: 'area' },
+      { clave: 'vehiculo', etiqueta: '¿Tienes vehículo propio?', tipo: 'si_no' },
+      { clave: 'metas', etiqueta: '¿Cuáles son tus metas a corto y largo plazo?', tipo: 'area', requerido: true },
+      {
+        clave: 'motivacion',
+        etiqueta: '¿Por qué crees que debería ser aprobada tu solicitud?',
+        tipo: 'area',
+        requerido: true,
+      },
+    ],
+  },
 ];
+
+/** Lista plana, para las vistas que no agrupan por sección. */
+export const PREGUNTAS_ADMISION: CampoAdmision[] = SECCIONES_ADMISION.flatMap((s) => s.campos);

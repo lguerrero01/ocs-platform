@@ -18,9 +18,10 @@ import { LogoComponent } from '../../shared/logo.component';
           <app-icono nombre="reloj" [tamano]="24" />
         </div>
         <h1 class="text-xl font-semibold mb-2">Solicitud en revisión</h1>
-        <p class="text-sm text-ocs-muted mb-6">
-          Un administrador está revisando tus respuestas. Recibirás un correo cuando haya una
-          decisión.
+        <p class="text-sm text-ocs-muted mb-6 leading-relaxed">
+          Es todo. Si necesitamos saber algo más te contactaremos personalmente. Tu solicitud será
+          revisada dentro de un lapso de 24 horas y recibirás un correo con el paso a seguir. Si se
+          encuentran inconsistencias la solicitud será denegada y podrás volver a postular.
         </p>
         <button (click)="salir()" class="text-sm text-ocs-accent underline cursor-pointer">
           Cerrar sesión
