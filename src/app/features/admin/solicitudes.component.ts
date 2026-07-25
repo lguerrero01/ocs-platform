@@ -29,6 +29,15 @@ import { SECCIONES_ADMISION, SolicitudAdmision } from '../../core/models';
       </button>
     </div>
 
+    @if (error()) {
+      <p
+        role="alert"
+        class="text-sm text-ocs-peligro border border-ocs-peligro/40 bg-ocs-peligro/5 rounded-lg px-3 py-2 mb-3"
+      >
+        {{ error() }}
+      </p>
+    }
+
     @if (cargando()) {
       <p class="text-sm text-ocs-muted">Cargando…</p>
     } @else if (vista() === 'pendientes') {
@@ -134,6 +143,7 @@ export class AdminSolicitudesComponent implements OnInit {
   readonly vista = signal<'pendientes' | 'historial'>('pendientes');
   readonly cargando = signal(true);
   readonly procesando = signal<string | null>(null);
+  readonly error = signal<string | null>(null);
 
   motivos: Record<string, string> = {};
 
@@ -153,7 +163,18 @@ export class AdminSolicitudesComponent implements OnInit {
 
   async decidir(s: SolicitudAdmision, decision: 'aprobado' | 'rechazado'): Promise<void> {
     this.procesando.set(s.id);
-    await this.datos.decidirSolicitud(s.id, decision, this.motivos[s.id]);
+    this.error.set(null);
+
+    const { error } = await this.datos.decidirSolicitud(s.id, decision, this.motivos[s.id]);
+
+    if (error) {
+      // Antes se ignoraba: la solicitud seguía en la lista y no había forma de
+      // saber que la decisión no había llegado a aplicarse.
+      this.error.set(error);
+      this.procesando.set(null);
+      return;
+    }
+
     await this.recargar();
     this.procesando.set(null);
   }

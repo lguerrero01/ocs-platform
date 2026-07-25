@@ -15,9 +15,18 @@ const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') ?? '';
 const CORREO_REMITENTE = Deno.env.get('CORREO_REMITENTE') ?? 'no-reply@example.com';
 const APP_URL = Deno.env.get('APP_URL') ?? 'http://localhost:4200';
 
+/**
+ * `apikey` y `x-client-info` las añade supabase-js por su cuenta en cada
+ * invocación. Si no se declaran aquí, el preflight las rechaza y la llamada
+ * nunca sale del navegador — la función responde perfectamente desde curl y aun
+ * así la aplicación no puede usarla.
+ */
 const cors = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, content-type',
+  'Access-Control-Allow-Headers':
+    'authorization, content-type, apikey, x-client-info, x-supabase-api-version',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Max-Age': '86400',
 };
 
 function render(plantilla: string, vars: Record<string, string>): string {
@@ -52,45 +61,28 @@ Deno.serve(async (req) => {
       return json({ error: 'No autorizado.' }, 403);
     }
 
-    // 3. Cargar la solicitud y su postulante.
-    const { data: solicitud } = await admin
-      .from('solicitudes_admision')
-      .select('id, usuario_id, estatus, perfiles!inner(nombre_usuario, correo)')
-      .eq('id', solicitud_id)
-      .single();
-
-    if (!solicitud) return json({ error: 'Solicitud no encontrada.' }, 404);
-    if (solicitud.estatus !== 'pendiente') {
-      return json({ error: 'Esta solicitud ya fue decidida.' }, 409);
-    }
-
-    const postulante = (solicitud as any).perfiles;
-
-    // 4. Registrar la decisión con trazabilidad de quién decidió.
-    await admin
-      .from('solicitudes_admision')
-      .update({
-        estatus: decision,
-        aprobado_por: actor.id,
-        decidido_at: new Date().toISOString(),
-        motivo_decision: motivo ?? null,
-      })
-      .eq('id', solicitud_id);
-
-    await admin
-      .from('perfiles')
-      .update({ estatus: decision === 'aprobado' ? 'activo' : 'rechazado' })
-      .eq('id', solicitud.usuario_id);
-
-    await admin.from('auditoria').insert({
-      actor_id: actor.id,
-      accion: decision === 'aprobado' ? 'solicitud_aprobada' : 'solicitud_rechazada',
-      entidad: 'solicitudes_admision',
-      entidad_id: solicitud_id,
-      detalle: { motivo: motivo ?? null },
+    // 3. Aplicar la decisión. Solicitud, perfil y auditoría van dentro de una
+    //    sola transacción en la base de datos: por separado, un fallo a mitad
+    //    dejaba la solicitud decidida y a la persona en el limbo, sin entrar y
+    //    sin constar como rechazada.
+    const { data: postulante, error: errorDecision } = await admin.rpc('decidir_solicitud', {
+      p_solicitud_id: solicitud_id,
+      p_decision: decision,
+      p_actor: actor.id,
+      p_motivo: motivo ?? null,
     });
 
-    // 5. Correo con la plantilla editable por el super admin.
+    if (errorDecision) {
+      const mensaje = errorDecision.message ?? 'No se pudo aplicar la decisión.';
+      const estado = mensaje.includes('ya fue decidida')
+        ? 409
+        : mensaje.includes('no encontrada')
+          ? 404
+          : 500;
+      return json({ error: mensaje }, estado);
+    }
+
+    // 4. Correo con la plantilla editable por el super admin.
     const { data: plantilla } = await admin
       .from('config_correo')
       .select('plantilla_asunto, plantilla_cuerpo')

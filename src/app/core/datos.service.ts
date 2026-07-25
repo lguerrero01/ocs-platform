@@ -244,12 +244,29 @@ export class DatosService {
     return { error: error?.message ?? null };
   }
 
-  /** Aprueba o rechaza vía Edge Function (valida rol y dispara el correo). */
+  /**
+   * Aprueba o rechaza vía Edge Function (valida rol y dispara el correo).
+   *
+   * Devuelve el mensaje real del servidor: cuando la función falla responde con
+   * un cuerpo JSON que `invoke` no expone en `error.message`, y sin leerlo el
+   * fallo se veía como si no hubiera pasado nada.
+   */
   async decidirSolicitud(solicitudId: string, decision: 'aprobado' | 'rechazado', motivo?: string) {
     const { data, error } = await this.db.functions.invoke('decidir-solicitud', {
       body: { solicitud_id: solicitudId, decision, motivo },
     });
-    return { data, error };
+
+    if (error) {
+      let mensaje = error.message;
+      const respuesta = (error as { context?: Response }).context;
+      if (respuesta && typeof respuesta.json === 'function') {
+        const cuerpo = await respuesta.json().catch(() => null);
+        if (cuerpo?.error) mensaje = cuerpo.detalle ? `${cuerpo.error} ${cuerpo.detalle}` : cuerpo.error;
+      }
+      return { data: null, error: mensaje };
+    }
+
+    return { data, error: null };
   }
 
   // --- códigos QR ----------------------------------------------------------
@@ -300,6 +317,23 @@ export class DatosService {
       .select('*, rangos(nombre)')
       .order('creado_at', { ascending: false });
     return data ?? [];
+  }
+
+  /**
+   * Deja constancia de que un admin miró dónde está alguien.
+   *
+   * La especificación lo pide y el consentimiento que firma el miembro se lo
+   * promete: «cada consulta queda registrada en la auditoría». Se llama antes de
+   * pintar el mapa, no después, para que quede registro aunque falle el render.
+   */
+  async registrarConsultaUbicacion(miembroId: string, nombre: string): Promise<void> {
+    await this.db.from('auditoria').insert({
+      actor_id: this.auth.perfil()?.id,
+      accion: 'ubicacion_consultada',
+      entidad: 'perfiles',
+      entidad_id: miembroId,
+      detalle: { miembro: nombre },
+    });
   }
 
   async cambiarRol(usuarioId: string, rol: 'admin' | 'usuario'): Promise<void> {

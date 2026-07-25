@@ -161,6 +161,41 @@ body {
   }
 }
 
+/**
+ * Mapa. Las teselas de OpenStreetMap solo existen en versión clara, así que en
+ * tema oscuro se invierten y se rota el matiz: es la forma habitual de obtener
+ * un mapa oscuro sin depender de un proveedor de teselas con cuenta.
+ */
+.mapa-ocs {
+  background-color: var(--ocs-elevated);
+}
+
+.mapa-ocs .leaflet-control-attribution {
+  background: color-mix(in srgb, var(--ocs-bg) 80%, transparent);
+  color: var(--ocs-muted);
+  font-size: 10px;
+}
+
+.mapa-ocs .leaflet-control-attribution a {
+  color: var(--ocs-accent);
+}
+
+.mapa-ocs .leaflet-bar a {
+  background-color: var(--ocs-surface);
+  color: var(--ocs-text);
+  border-bottom-color: var(--ocs-border);
+}
+
+:root[data-tema="oscuro"] .mapa-ocs .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.75);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema]) .mapa-ocs .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.75);
+  }
+}
+
 /* Respeta el notch en móviles instalados como PWA. */
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);

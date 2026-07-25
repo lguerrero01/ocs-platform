@@ -1,8 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatosService } from '../../core/datos.service';
 import { AuthService } from '../../core/auth.service';
 import { Perfil, Rango } from '../../core/models';
+import { MapaComponent } from '../../shared/mapa.component';
 
 interface MiembroFila extends Perfil {
   rangos?: { nombre: string } | null;
@@ -16,7 +18,7 @@ interface MiembroFila extends Perfil {
  */
 @Component({
   selector: 'app-admin-miembros',
-  imports: [FormsModule],
+  imports: [FormsModule, DatePipe, MapaComponent],
   template: `
     <input
       [(ngModel)]="busqueda"
@@ -61,10 +63,18 @@ interface MiembroFila extends Perfil {
             </div>
 
             <div class="flex flex-wrap gap-2 items-center">
+              <!--
+                Con un binding de value directo, el valor se asigna antes de que
+                se inserten las opciones: el navegador descarta uno que todavía
+                no existe y todos los selects mostraban «Sin rango». ngModel
+                sincroniza después de renderizarlas.
+              -->
               <select
-                [value]="m.rango_id ?? ''"
-                (change)="cambiarRango(m, $event)"
-                class="text-xs rounded-lg bg-ocs-bg border border-ocs-border-strong px-2 py-1.5"
+                [ngModel]="m.rango_id ?? ''"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="cambiarRango(m, $event)"
+                [attr.aria-label]="'Rango de ' + m.nombre_usuario"
+                class="text-xs rounded-lg bg-ocs-bg border border-ocs-border-strong px-2 py-1.5 cursor-pointer"
               >
                 <option value="">Sin rango</option>
                 @for (r of rangos(); track r.id) {
@@ -84,7 +94,34 @@ interface MiembroFila extends Perfil {
                   {{ m.rol === 'admin' ? 'Quitar admin' : 'Hacer admin' }}
                 </button>
               }
+
+              @if (m.ubicacion_lat !== null && m.ubicacion_lng !== null) {
+                <button
+                  (click)="alternarUbicacion(m)"
+                  [attr.aria-expanded]="ubicacionAbierta() === m.id"
+                  class="text-xs text-ocs-accent px-2 py-1.5 cursor-pointer"
+                >
+                  {{ ubicacionAbierta() === m.id ? 'Ocultar ubicación' : 'Ver ubicación' }}
+                </button>
+              } @else {
+                <span class="text-xs text-ocs-muted px-2 py-1.5">Sin ubicación</span>
+              }
             </div>
+
+            @if (ubicacionAbierta() === m.id && m.ubicacion_lat !== null && m.ubicacion_lng !== null) {
+              <div class="mt-3">
+                <app-mapa
+                  [lat]="m.ubicacion_lat"
+                  [lng]="m.ubicacion_lng"
+                  [etiqueta]="m.nombre_usuario"
+                  [altura]="200"
+                />
+                <p class="text-xs text-ocs-muted mt-1">
+                  Capturada el {{ m.ubicacion_actualizada_at | date: 'medium' }}. Esta consulta
+                  quedó registrada en la auditoría.
+                </p>
+              </div>
+            }
           </div>
         }
       </div>
@@ -98,6 +135,8 @@ export class AdminMiembrosComponent implements OnInit {
   readonly miembros = signal<MiembroFila[]>([]);
   readonly rangos = signal<Rango[]>([]);
   readonly cargando = signal(true);
+  /** Id del miembro cuyo mapa está abierto; solo uno a la vez. */
+  readonly ubicacionAbierta = signal<string | null>(null);
 
   busqueda = '';
 
@@ -120,9 +159,18 @@ export class AdminMiembrosComponent implements OnInit {
     this.miembros.set((await this.datos.miembros()) as MiembroFila[]);
   }
 
-  async cambiarRango(m: MiembroFila, evento: Event): Promise<void> {
-    const valor = (evento.target as HTMLSelectElement).value;
-    await this.datos.cambiarRango(m.id, valor || null);
+  /** Abre o cierra el mapa. Al abrirlo deja constancia de la consulta. */
+  async alternarUbicacion(m: MiembroFila): Promise<void> {
+    if (this.ubicacionAbierta() === m.id) {
+      this.ubicacionAbierta.set(null);
+      return;
+    }
+    await this.datos.registrarConsultaUbicacion(m.id, m.nombre_usuario);
+    this.ubicacionAbierta.set(m.id);
+  }
+
+  async cambiarRango(m: MiembroFila, rangoId: string): Promise<void> {
+    await this.datos.cambiarRango(m.id, rangoId || null);
     await this.recargar();
   }
 

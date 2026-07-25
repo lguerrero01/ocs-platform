@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { AuthService } from '../../core/auth.service';
 import { GeoConsentService } from '../../core/geo-consent.service';
+import { MapaComponent } from '../../shared/mapa.component';
 
 /**
  * Perfil del miembro. Incluye el control de revocación de ubicación: si la
@@ -10,7 +11,7 @@ import { GeoConsentService } from '../../core/geo-consent.service';
  */
 @Component({
   selector: 'app-perfil',
-  imports: [DatePipe, DecimalPipe],
+  imports: [DatePipe, DecimalPipe, MapaComponent],
   template: `
     <h1 class="text-xl font-semibold mb-5">Mi perfil</h1>
 
@@ -50,10 +51,23 @@ import { GeoConsentService } from '../../core/geo-consent.service';
             {{ p.geo_consentimiento_at | date: 'medium' }}.
           </p>
           @if (p.ubicacion_actualizada_at) {
-            <p class="text-xs text-ocs-muted mb-3">
+            <p class="text-xs text-ocs-muted mb-2">
               Última captura: {{ p.ubicacion_actualizada_at | date: 'medium' }}
               ({{ p.ubicacion_lat | number: '1.4-4' }}, {{ p.ubicacion_lng | number: '1.4-4' }})
             </p>
+            @if (p.ubicacion_lat !== null && p.ubicacion_lng !== null) {
+              <div class="mb-3">
+                <app-mapa
+                  [lat]="p.ubicacion_lat"
+                  [lng]="p.ubicacion_lng"
+                  etiqueta="Tu última posición registrada"
+                  [altura]="200"
+                />
+                <p class="text-xs text-ocs-muted mt-1">
+                  Esto es exactamente lo que ven los administradores.
+                </p>
+              </div>
+            }
           }
           <button
             (click)="revocar()"
