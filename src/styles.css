@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ocs-bg: #0b0f14;
+  --color-ocs-surface: #131a22;
+  --color-ocs-border: #223040;
+  --color-ocs-accent: #c9a227;
+  --color-ocs-accent-soft: #e0be4d;
+  --color-ocs-text: #e6edf3;
+  --color-ocs-muted: #8b9bb0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-ocs-bg);
+  color: var(--color-ocs-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Respeta el notch en móviles instalados como PWA. */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
