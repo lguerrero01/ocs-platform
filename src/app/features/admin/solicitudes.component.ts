@@ -16,14 +16,14 @@ import { PREGUNTAS_ADMISION, SolicitudAdmision } from '../../core/models';
       <button
         (click)="vista.set('pendientes')"
         class="px-3 py-1.5 text-sm rounded-lg"
-        [class]="vista() === 'pendientes' ? 'bg-ocs-accent text-black' : 'text-ocs-muted'"
+        [class]="vista() === 'pendientes' ? 'bg-ocs-accent text-ocs-bg' : 'text-ocs-muted'"
       >
         Pendientes ({{ pendientes().length }})
       </button>
       <button
         (click)="vista.set('historial')"
         class="px-3 py-1.5 text-sm rounded-lg"
-        [class]="vista() === 'historial' ? 'bg-ocs-accent text-black' : 'text-ocs-muted'"
+        [class]="vista() === 'historial' ? 'bg-ocs-accent text-ocs-bg' : 'text-ocs-muted'"
       >
         Historial
       </button>
@@ -63,21 +63,21 @@ import { PREGUNTAS_ADMISION, SolicitudAdmision } from '../../core/models';
               [(ngModel)]="motivos[s.id]"
               [name]="'motivo-' + s.id"
               placeholder="Motivo (opcional, queda registrado)"
-              class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm mb-3"
+              class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm mb-3"
             />
 
             <div class="flex gap-2">
               <button
                 (click)="decidir(s, 'aprobado')"
                 [disabled]="procesando() === s.id"
-                class="flex-1 rounded-lg bg-ocs-accent text-black py-2 text-sm font-medium disabled:opacity-50"
+                class="flex-1 rounded-lg bg-ocs-accent text-ocs-bg py-2 text-sm font-medium disabled:opacity-50 cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
               >
                 Aprobar
               </button>
               <button
                 (click)="decidir(s, 'rechazado')"
                 [disabled]="procesando() === s.id"
-                class="flex-1 rounded-lg border border-red-800 text-red-400 py-2 text-sm disabled:opacity-50"
+                class="flex-1 rounded-lg border border-ocs-peligro/50 text-ocs-peligro py-2 text-sm disabled:opacity-50 cursor-pointer transition-colors duration-200 hover:bg-ocs-peligro/10"
               >
                 Rechazar
               </button>
@@ -95,8 +95,8 @@ import { PREGUNTAS_ADMISION, SolicitudAdmision } from '../../core/models';
                 class="text-xs px-2 py-0.5 rounded-full"
                 [class]="
                   s.estatus === 'aprobado'
-                    ? 'bg-green-950 text-green-400'
-                    : 'bg-red-950 text-red-400'
+                    ? 'bg-ocs-exito/15 text-ocs-exito'
+                    : 'bg-ocs-peligro/15 text-ocs-peligro'
                 "
               >
                 {{ s.estatus }}

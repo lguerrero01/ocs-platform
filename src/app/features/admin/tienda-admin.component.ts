@@ -19,7 +19,7 @@ import { ArticuloTienda } from '../../core/models';
         [(ngModel)]="borrador.nombre"
         required
         placeholder="Nombre"
-        class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+        class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
       />
 
       <textarea
@@ -27,14 +27,14 @@ import { ArticuloTienda } from '../../core/models';
         [(ngModel)]="borrador.descripcion"
         rows="2"
         placeholder="Descripción"
-        class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+        class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
       ></textarea>
 
       <input
         name="imagen"
         [(ngModel)]="borrador.imagen_url"
         placeholder="URL de imagen (opcional)"
-        class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+        class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
       />
 
       <div class="grid grid-cols-2 gap-3">
@@ -46,7 +46,7 @@ import { ArticuloTienda } from '../../core/models';
             step="0.01"
             [(ngModel)]="borrador.precio_usd"
             required
-            class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+            class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
           />
         </div>
         <div>
@@ -56,7 +56,7 @@ import { ArticuloTienda } from '../../core/models';
             type="number"
             [(ngModel)]="borrador.stock"
             required
-            class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+            class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
           />
         </div>
       </div>
@@ -69,7 +69,7 @@ import { ArticuloTienda } from '../../core/models';
       <div class="flex gap-2">
         <button
           type="submit"
-          class="rounded-lg bg-ocs-accent text-black px-4 py-2 text-sm font-medium"
+          class="rounded-lg bg-ocs-accent text-ocs-bg px-4 py-2 text-sm font-medium cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
         >
           Guardar
         </button>
@@ -97,7 +97,7 @@ import { ArticuloTienda } from '../../core/models';
             </div>
             <div class="flex gap-2 shrink-0">
               <button (click)="editar(a)" class="text-xs text-ocs-accent">Editar</button>
-              <button (click)="borrar(a)" class="text-xs text-red-400">Borrar</button>
+              <button (click)="borrar(a)" class="text-xs text-ocs-peligro">Borrar</button>
             </div>
           </div>
         }

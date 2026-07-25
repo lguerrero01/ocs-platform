@@ -21,13 +21,13 @@ import { Publicacion, TipoPublicacion } from '../../core/models';
             class="rounded-xl border p-4"
             [class]="
               p.tipo === 'llamado_atencion'
-                ? 'border-red-900 bg-red-950/30'
+                ? 'border-ocs-peligro/40 bg-ocs-peligro/10'
                 : 'border-ocs-accent/40 bg-ocs-accent/5'
             "
           >
             <div class="flex items-center gap-2 mb-1">
               <span class="text-xs uppercase tracking-wide"
-                [class]="p.tipo === 'llamado_atencion' ? 'text-red-400' : 'text-ocs-accent'"
+                [class]="p.tipo === 'llamado_atencion' ? 'text-ocs-peligro' : 'text-ocs-accent'"
               >
                 {{ p.tipo === 'llamado_atencion' ? 'Llamado de atención' : 'Anuncio' }}
               </span>

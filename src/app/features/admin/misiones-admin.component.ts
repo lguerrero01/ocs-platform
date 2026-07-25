@@ -18,7 +18,7 @@ import { Mision, Rango, TipoMision } from '../../core/models';
         [(ngModel)]="borrador.titulo"
         required
         placeholder="Título"
-        class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+        class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
       />
 
       <textarea
@@ -26,14 +26,14 @@ import { Mision, Rango, TipoMision } from '../../core/models';
         [(ngModel)]="borrador.descripcion"
         rows="3"
         placeholder="Descripción"
-        class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+        class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
       ></textarea>
 
       <div class="grid grid-cols-2 gap-3">
         <select
           name="tipo"
           [(ngModel)]="borrador.tipo"
-          class="rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+          class="rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
         >
           <option value="individual">Individual</option>
           <option value="grupal">Grupal</option>
@@ -44,14 +44,14 @@ import { Mision, Rango, TipoMision } from '../../core/models';
           type="number"
           [(ngModel)]="borrador.recompensa_creditos"
           placeholder="Puntos"
-          class="rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+          class="rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
         />
       </div>
 
       <select
         name="rango"
         [(ngModel)]="borrador.rango_requerido_id"
-        class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+        class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
       >
         <option [ngValue]="null">Cualquier rango</option>
         @for (r of rangos(); track r.id) {
@@ -62,7 +62,7 @@ import { Mision, Rango, TipoMision } from '../../core/models';
       <div class="flex gap-2">
         <button
           type="submit"
-          class="rounded-lg bg-ocs-accent text-black px-4 py-2 text-sm font-medium"
+          class="rounded-lg bg-ocs-accent text-ocs-bg px-4 py-2 text-sm font-medium cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
         >
           Guardar
         </button>
@@ -90,7 +90,7 @@ import { Mision, Rango, TipoMision } from '../../core/models';
             </div>
             <div class="flex gap-2 shrink-0">
               <button (click)="editar(m)" class="text-xs text-ocs-accent">Editar</button>
-              <button (click)="borrar(m)" class="text-xs text-red-400">Borrar</button>
+              <button (click)="borrar(m)" class="text-xs text-ocs-peligro">Borrar</button>
             </div>
           </div>
         }

@@ -58,7 +58,7 @@ import { GeoConsentService } from '../../core/geo-consent.service';
           <button
             (click)="revocar()"
             [disabled]="procesando()"
-            class="text-sm rounded-lg border border-red-800 text-red-400 px-3 py-1.5 disabled:opacity-50"
+            class="text-sm rounded-lg border border-ocs-peligro/50 text-ocs-peligro px-3 py-1.5 disabled:opacity-50 cursor-pointer transition-colors duration-200 hover:bg-ocs-peligro/10"
           >
             {{ procesando() ? 'Revocando…' : 'Revocar y borrar mi ubicación' }}
           </button>

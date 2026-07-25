@@ -55,7 +55,7 @@ import { Mision, MisionAsignada, TipoMision } from '../../core/models';
                 class="text-[10px] uppercase px-2 py-0.5 rounded-full border shrink-0"
                 [class]="
                   m.tipo === 'grupal'
-                    ? 'border-blue-800 text-blue-300'
+                    ? 'border-ocs-accent/40 text-ocs-accent-soft'
                     : 'border-ocs-border text-ocs-muted'
                 "
               >
@@ -67,11 +67,11 @@ import { Mision, MisionAsignada, TipoMision } from '../../core/models';
               <span class="text-sm text-ocs-accent">+{{ m.recompensa_creditos }} pts</span>
               @if (estadoDe(m.id); as asignacion) {
                 @if (asignacion.completada) {
-                  <span class="text-xs text-green-400">✓ Completada</span>
+                  <span class="text-xs text-ocs-exito">✓ Completada</span>
                 } @else {
                   <button
                     (click)="completar(asignacion)"
-                    class="text-xs rounded-lg border border-ocs-accent text-ocs-accent px-3 py-1.5"
+                    class="text-xs rounded-lg border border-ocs-accent text-ocs-accent px-3 py-1.5 cursor-pointer transition-colors duration-200 hover:bg-ocs-accent/10"
                   >
                     Marcar completada
                   </button>

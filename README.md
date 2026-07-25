@@ -127,6 +127,29 @@ auditoría cubren la parte técnica; la parte documental corre por tu cuenta.
 
 ---
 
+## Identidad visual
+
+La paleta no es decorativa: sale del emblema. El logo existe en dorado
+(`#956d2f`) y en blanco sobre oliva (`#4d574e`), y esos dos colores son los dos
+ejes del tema en `src/styles.css`:
+
+| Token | Valor | De dónde sale |
+|---|---|---|
+| `--color-ocs-bg` / `surface` / `elevated` / `border` | `#0e110e` … `#303631` | Oliva del logo (matiz 126°) a distinta luminosidad |
+| `--color-ocs-border-strong` | `#4d574e` | Oliva de marca exacto; bordes de campos |
+| `--color-ocs-accent` | `#cb9a4d` | Dorado de marca (36°) aclarado hasta contrastar 7.5:1 |
+| `--color-ocs-accent-deep` | `#956d2f` | Dorado original; solo superficies grandes, nunca texto |
+
+Todos los pares de texto superan 7:1 (WCAG AAA). El dorado original se queda en
+4.1:1 sobre el fondo, así que sirve para una forma grande pero no para leer.
+
+Los iconos son SVG de trazo que heredan `currentColor` (`shared/icono.component.ts`),
+no emoji: un emoji lo dibuja cada sistema operativo a su manera y con colores
+ajenos a la paleta. Los assets del logo se generan desde `brand/` — ver
+`brand/README.md`.
+
+---
+
 ## Estado de la implementación
 
 **Implementado y compilando:**

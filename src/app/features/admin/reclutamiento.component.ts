@@ -30,7 +30,7 @@ interface CodigoListado {
       <button
         (click)="generar()"
         [disabled]="generando()"
-        class="rounded-lg bg-ocs-accent text-black px-4 py-2 text-sm font-medium disabled:opacity-50"
+        class="rounded-lg bg-ocs-accent text-ocs-bg px-4 py-2 text-sm font-medium disabled:opacity-50 cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
       >
         {{ generando() ? 'Generando…' : 'Generar nuevo QR' }}
       </button>
@@ -136,7 +136,7 @@ export class AdminReclutamientoComponent implements OnInit {
 
   claseEstado(c: CodigoListado): string {
     return this.estado(c) === 'activo'
-      ? 'bg-green-950 text-green-400'
+      ? 'bg-ocs-exito/15 text-ocs-exito'
       : 'bg-ocs-bg text-ocs-muted';
   }
 }

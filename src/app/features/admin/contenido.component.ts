@@ -18,7 +18,7 @@ import { Publicacion, TipoPublicacion } from '../../core/models';
       <select
         name="tipo"
         [(ngModel)]="borrador.tipo"
-        class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+        class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
       >
         @for (t of tipos; track t.valor) {
           <option [value]="t.valor">{{ t.etiqueta }}</option>
@@ -30,7 +30,7 @@ import { Publicacion, TipoPublicacion } from '../../core/models';
         [(ngModel)]="borrador.titulo"
         required
         placeholder="Título"
-        class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+        class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
       />
 
       <textarea
@@ -39,13 +39,13 @@ import { Publicacion, TipoPublicacion } from '../../core/models';
         required
         rows="5"
         placeholder="Contenido"
-        class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+        class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
       ></textarea>
 
       <div class="flex gap-2">
         <button
           type="submit"
-          class="rounded-lg bg-ocs-accent text-black px-4 py-2 text-sm font-medium"
+          class="rounded-lg bg-ocs-accent text-ocs-bg px-4 py-2 text-sm font-medium cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
         >
           Guardar
         </button>
@@ -71,7 +71,7 @@ import { Publicacion, TipoPublicacion } from '../../core/models';
               </div>
               <div class="flex gap-2 shrink-0">
                 <button (click)="editar(p)" class="text-xs text-ocs-accent">Editar</button>
-                <button (click)="borrar(p)" class="text-xs text-red-400">Borrar</button>
+                <button (click)="borrar(p)" class="text-xs text-ocs-peligro">Borrar</button>
               </div>
             </div>
           </div>

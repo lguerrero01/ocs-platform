@@ -1,13 +1,32 @@
 @import "tailwindcss";
 
+/**
+ * Paleta derivada del logo de la organización.
+ *
+ * El emblema existe en dos versiones: dorado (#956d2f) sobre transparente y
+ * blanco sobre verde oliva (#4d574e). De ahí salen los dos ejes del tema:
+ * el neutro es el oliva de marca llevado a la oscuridad (mismo matiz, 126°),
+ * y el acento es el dorado de marca aclarado hasta contrastar sobre él.
+ *
+ * Todos los pares de texto verificados superan 7:1 (WCAG AAA):
+ *   text/bg 15.9 · muted/bg 7.9 · accent/bg 7.5 · bg sobre botón acento 7.5
+ */
 @theme {
-  --color-ocs-bg: #0b0f14;
-  --color-ocs-surface: #131a22;
-  --color-ocs-border: #223040;
-  --color-ocs-accent: #c9a227;
-  --color-ocs-accent-soft: #e0be4d;
-  --color-ocs-text: #e6edf3;
-  --color-ocs-muted: #8b9bb0;
+  --color-ocs-bg: #0e110e;
+  --color-ocs-surface: #181b18;
+  --color-ocs-elevated: #222622;
+  --color-ocs-border: #303631;
+  /** Oliva exacto del logo. Reservado a bordes que deben leerse (campos). */
+  --color-ocs-border-strong: #4d574e;
+  --color-ocs-muted: #9cab9d;
+  --color-ocs-text: #e9ecea;
+  /** Dorado de marca aclarado: mismo matiz (36°), legible sobre el fondo. */
+  --color-ocs-accent: #cb9a4d;
+  --color-ocs-accent-soft: #d9bb8c;
+  /** Dorado original del logo. Solo para superficies grandes, no para texto. */
+  --color-ocs-accent-deep: #956d2f;
+  --color-ocs-exito: #6fbf8b;
+  --color-ocs-peligro: #e8736b;
 }
 
 html,
@@ -21,9 +40,52 @@ body {
   color: var(--color-ocs-text);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+/**
+ * Foco visible en todo lo que se pueda tabular. El anillo del navegador se
+ * pierde sobre fondo oscuro; este usa el acento, que contrasta 7.5:1.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-ocs-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Quien no navega con teclado no ve el anillo al hacer clic. */
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Respeta el notch en móviles instalados como PWA. */
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/**
+ * Área táctil de 44px sin engordar el elemento visible: el pseudoelemento
+ * extiende la zona sensible más allá del borde pintado.
+ */
+.toque-minimo {
+  position: relative;
+}
+
+.toque-minimo::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 0 0;
+  min-height: 44px;
+  translate: 0 -50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

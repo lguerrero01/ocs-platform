@@ -38,7 +38,7 @@ interface FilaAuditoria {
             <input
               [(ngModel)]="p.plantilla_asunto"
               [name]="'asunto-' + p.id"
-              class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm mb-3"
+              class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm mb-3"
             />
 
             <label class="block text-xs text-ocs-muted mb-1">Cuerpo (HTML)</label>
@@ -46,18 +46,18 @@ interface FilaAuditoria {
               [(ngModel)]="p.plantilla_cuerpo"
               [name]="'cuerpo-' + p.id"
               rows="6"
-              class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm font-mono"
+              class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm font-mono"
             ></textarea>
 
             <div class="flex items-center gap-3 mt-3">
               <button
                 (click)="guardarPlantilla(p)"
-                class="rounded-lg bg-ocs-accent text-black px-4 py-2 text-sm font-medium"
+                class="rounded-lg bg-ocs-accent text-ocs-bg px-4 py-2 text-sm font-medium cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
               >
                 Guardar
               </button>
               @if (guardado() === p.id) {
-                <span class="text-xs text-green-400">✓ Guardado</span>
+                <span class="text-xs text-ocs-exito">✓ Guardado</span>
               }
             </div>
           </div>
@@ -81,7 +81,7 @@ interface FilaAuditoria {
               <input
                 [(ngModel)]="m.nombre"
                 name="moneda-nombre"
-                class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+                class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
               />
             </div>
             <div>
@@ -89,7 +89,7 @@ interface FilaAuditoria {
               <input
                 [(ngModel)]="m.simbolo"
                 name="moneda-simbolo"
-                class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+                class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
               />
             </div>
           </div>
@@ -100,12 +100,12 @@ interface FilaAuditoria {
               name="moneda-valor"
               type="number"
               step="0.000001"
-              class="w-full rounded-lg bg-ocs-bg border border-ocs-border px-3 py-2 text-sm"
+              class="w-full rounded-lg bg-ocs-bg border border-ocs-border-strong px-3 py-2 text-sm"
             />
           </div>
           <button
             (click)="guardarMoneda(m)"
-            class="rounded-lg bg-ocs-accent text-black px-4 py-2 text-sm font-medium"
+            class="rounded-lg bg-ocs-accent text-ocs-bg px-4 py-2 text-sm font-medium cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
           >
             Guardar
           </button>

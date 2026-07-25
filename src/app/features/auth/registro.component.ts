@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { DatosService } from '../../core/datos.service';
 import { PREGUNTAS_ADMISION } from '../../core/models';
+import { LogoComponent } from '../../shared/logo.component';
 
 /**
  * Registro en tres pasos:
@@ -13,14 +14,24 @@ import { PREGUNTAS_ADMISION } from '../../core/models';
  */
 @Component({
   selector: 'app-registro',
-  imports: [FormsModule],
+  imports: [FormsModule, LogoComponent],
   template: `
     <div class="min-h-screen flex items-center justify-center px-4 py-10">
       <div class="w-full max-w-md">
-        <h1 class="text-2xl font-semibold text-ocs-accent mb-6">Solicitud de ingreso</h1>
+        <div class="flex items-center gap-3 mb-6">
+          <app-logo [tamano]="52" [decorativo]="true" />
+          <h1 class="text-2xl font-semibold text-ocs-accent">Solicitud de ingreso</h1>
+        </div>
 
         <!-- Indicador de paso -->
-        <div class="flex gap-2 mb-8">
+        <div
+          class="flex gap-2 mb-8"
+          role="progressbar"
+          aria-valuemin="1"
+          aria-valuemax="3"
+          [attr.aria-valuenow]="paso()"
+          [attr.aria-label]="'Paso ' + paso() + ' de 3'"
+        >
           @for (p of [1, 2, 3]; track p) {
             <div
               class="h-1 flex-1 rounded-full"
@@ -40,15 +51,15 @@ import { PREGUNTAS_ADMISION } from '../../core/models';
               [(ngModel)]="codigo"
               name="codigo"
               placeholder="00000000-0000-0000-0000-000000000000"
-              class="w-full rounded-lg bg-ocs-surface border border-ocs-border px-3 py-2 mb-4 font-mono text-sm"
+              class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2 mb-4 font-mono text-sm"
             />
             @if (error()) {
-              <p class="text-sm text-red-400 mb-3">{{ error() }}</p>
+              <p class="text-sm text-ocs-peligro mb-3">{{ error() }}</p>
             }
             <button
               (click)="validarCodigo()"
               [disabled]="cargando() || !codigo"
-              class="w-full rounded-lg bg-ocs-accent text-black font-medium py-2.5 disabled:opacity-50"
+              class="w-full rounded-lg bg-ocs-accent text-ocs-bg font-medium py-2.5 disabled:opacity-50 cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
             >
               {{ cargando() ? 'Validando…' : 'Validar código' }}
             </button>
@@ -64,7 +75,7 @@ import { PREGUNTAS_ADMISION } from '../../core/models';
                   name="nombre"
                   [(ngModel)]="nombreUsuario"
                   required
-                  class="w-full rounded-lg bg-ocs-surface border border-ocs-border px-3 py-2"
+                  class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2"
                 />
               </div>
               <div>
@@ -75,7 +86,7 @@ import { PREGUNTAS_ADMISION } from '../../core/models';
                   type="email"
                   [(ngModel)]="correo"
                   required
-                  class="w-full rounded-lg bg-ocs-surface border border-ocs-border px-3 py-2"
+                  class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2"
                 />
               </div>
               <div>
@@ -87,17 +98,17 @@ import { PREGUNTAS_ADMISION } from '../../core/models';
                   [(ngModel)]="password"
                   required
                   minlength="8"
-                  class="w-full rounded-lg bg-ocs-surface border border-ocs-border px-3 py-2"
+                  class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2"
                 />
                 <p class="text-xs text-ocs-muted mt-1">Mínimo 8 caracteres.</p>
               </div>
               @if (error()) {
-                <p class="text-sm text-red-400">{{ error() }}</p>
+                <p class="text-sm text-ocs-peligro">{{ error() }}</p>
               }
               <button
                 type="submit"
                 [disabled]="cargando()"
-                class="w-full rounded-lg bg-ocs-accent text-black font-medium py-2.5 disabled:opacity-50"
+                class="w-full rounded-lg bg-ocs-accent text-ocs-bg font-medium py-2.5 disabled:opacity-50 cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
               >
                 {{ cargando() ? 'Creando…' : 'Continuar' }}
               </button>
@@ -121,25 +132,25 @@ import { PREGUNTAS_ADMISION } from '../../core/models';
                       [name]="pregunta.clave"
                       rows="3"
                       [(ngModel)]="respuestas[pregunta.clave]"
-                      class="w-full rounded-lg bg-ocs-surface border border-ocs-border px-3 py-2"
+                      class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2"
                     ></textarea>
                   } @else {
                     <input
                       [id]="pregunta.clave"
                       [name]="pregunta.clave"
                       [(ngModel)]="respuestas[pregunta.clave]"
-                      class="w-full rounded-lg bg-ocs-surface border border-ocs-border px-3 py-2"
+                      class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2"
                     />
                   }
                 </div>
               }
               @if (error()) {
-                <p class="text-sm text-red-400">{{ error() }}</p>
+                <p class="text-sm text-ocs-peligro">{{ error() }}</p>
               }
               <button
                 type="submit"
                 [disabled]="cargando()"
-                class="w-full rounded-lg bg-ocs-accent text-black font-medium py-2.5 disabled:opacity-50"
+                class="w-full rounded-lg bg-ocs-accent text-ocs-bg font-medium py-2.5 disabled:opacity-50 cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
               >
                 {{ cargando() ? 'Enviando…' : 'Enviar solicitud' }}
               </button>

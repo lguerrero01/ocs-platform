@@ -50,3 +50,6 @@ src/environments/environment.local.ts
 # Supabase CLI
 .supabase/
 supabase/.temp/
+
+# Artefactos de sesiones de Playwright
+.playwright-mcp/

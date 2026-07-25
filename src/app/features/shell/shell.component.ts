@@ -2,20 +2,25 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { CarritoService } from '../../core/carrito.service';
+import { IconoComponent, NombreIcono } from '../../shared/icono.component';
+import { LogoComponent } from '../../shared/logo.component';
 
 /**
  * Layout principal. Mobile-first: barra inferior en móvil, lateral en escritorio.
  */
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, IconoComponent, LogoComponent],
   template: `
     <div class="min-h-screen md:flex">
       <!-- Barra lateral (escritorio) -->
       <aside
         class="hidden md:flex md:flex-col md:w-60 border-r border-ocs-border bg-ocs-surface p-4 shrink-0"
       >
-        <div class="text-ocs-accent font-semibold text-lg mb-6 px-2">OCS</div>
+        <a routerLink="/" class="flex items-center gap-2.5 mb-6 px-2 py-1 rounded-lg">
+          <app-logo [tamano]="32" [decorativo]="true" />
+          <span class="text-ocs-accent font-semibold text-lg tracking-wide">OCS</span>
+        </a>
 
         <nav class="flex flex-col gap-1 flex-1">
           @for (item of navegacion; track item.ruta) {
@@ -23,9 +28,9 @@ import { CarritoService } from '../../core/carrito.service';
               [routerLink]="item.ruta"
               routerLinkActive="bg-ocs-bg text-ocs-accent"
               [routerLinkActiveOptions]="{ exact: item.ruta === '/' }"
-              class="px-3 py-2 rounded-lg text-sm text-ocs-muted hover:text-ocs-text flex items-center gap-2"
+              class="px-3 py-2.5 rounded-lg text-sm text-ocs-muted hover:text-ocs-text hover:bg-ocs-elevated flex items-center gap-2.5 transition-colors duration-200 cursor-pointer"
             >
-              <span>{{ item.icono }}</span>
+              <app-icono [nombre]="item.icono" />
               <span>{{ item.etiqueta }}</span>
             </a>
           }
@@ -34,22 +39,28 @@ import { CarritoService } from '../../core/carrito.service';
             <a
               routerLink="/admin"
               routerLinkActive="bg-ocs-bg text-ocs-accent"
-              class="px-3 py-2 rounded-lg text-sm text-ocs-muted hover:text-ocs-text flex items-center gap-2 mt-4 border-t border-ocs-border pt-4"
+              class="px-3 py-2.5 rounded-lg text-sm text-ocs-muted hover:text-ocs-text hover:bg-ocs-elevated flex items-center gap-2.5 mt-4 border-t border-ocs-border pt-4 transition-colors duration-200 cursor-pointer"
             >
-              <span>🛡️</span><span>Administración</span>
+              <app-icono nombre="admin" />
+              <span>Administración</span>
             </a>
           }
         </nav>
 
         <div class="border-t border-ocs-border pt-3 mt-3">
-          <a routerLink="/perfil" class="block text-sm px-3 py-1.5 hover:text-ocs-accent">
-            {{ auth.perfil()?.nombre_usuario }}
+          <a
+            routerLink="/perfil"
+            class="flex items-center gap-2.5 text-sm px-3 py-2 rounded-lg text-ocs-text hover:text-ocs-accent hover:bg-ocs-elevated transition-colors duration-200 cursor-pointer"
+          >
+            <app-icono nombre="perfil" [tamano]="18" />
+            <span class="truncate">{{ auth.perfil()?.nombre_usuario }}</span>
           </a>
           <button
             (click)="salir()"
-            class="text-xs text-ocs-muted px-3 py-1.5 hover:text-ocs-text"
+            class="flex items-center gap-2.5 w-full text-xs text-ocs-muted px-3 py-2 rounded-lg hover:text-ocs-text hover:bg-ocs-elevated transition-colors duration-200 cursor-pointer"
           >
-            Cerrar sesión
+            <app-icono nombre="salir" [tamano]="18" />
+            <span>Cerrar sesión</span>
           </button>
         </div>
       </aside>
@@ -57,11 +68,18 @@ import { CarritoService } from '../../core/carrito.service';
       <!-- Cabecera móvil -->
       <div class="flex-1 flex flex-col min-w-0">
         <header
-          class="md:hidden flex items-center justify-between border-b border-ocs-border bg-ocs-surface px-4 py-3 sticky top-0 z-10"
+          class="md:hidden flex items-center justify-between border-b border-ocs-border bg-ocs-surface px-4 py-2.5 sticky top-0 z-10"
         >
-          <span class="text-ocs-accent font-semibold">OCS</span>
-          <a routerLink="/perfil" class="text-sm text-ocs-muted">
-            {{ auth.perfil()?.nombre_usuario }}
+          <a routerLink="/" class="flex items-center gap-2">
+            <app-logo [tamano]="28" [decorativo]="true" />
+            <span class="text-ocs-accent font-semibold tracking-wide">OCS</span>
+          </a>
+          <a
+            routerLink="/perfil"
+            class="flex items-center gap-1.5 text-sm text-ocs-muted px-2 py-2 rounded-lg"
+          >
+            <app-icono nombre="perfil" [tamano]="18" />
+            <span class="truncate max-w-32">{{ auth.perfil()?.nombre_usuario }}</span>
           </a>
         </header>
 
@@ -78,9 +96,9 @@ import { CarritoService } from '../../core/carrito.service';
               [routerLink]="item.ruta"
               routerLinkActive="text-ocs-accent"
               [routerLinkActiveOptions]="{ exact: item.ruta === '/' }"
-              class="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-ocs-muted text-[10px]"
+              class="flex-1 flex flex-col items-center justify-center gap-1 min-h-[56px] py-2 text-ocs-muted text-[10px] transition-colors duration-200"
             >
-              <span class="text-lg leading-none">{{ item.icono }}</span>
+              <app-icono [nombre]="item.icono" [tamano]="22" />
               <span>{{ item.etiqueta }}</span>
             </a>
           }
@@ -88,9 +106,9 @@ import { CarritoService } from '../../core/carrito.service';
             <a
               routerLink="/admin"
               routerLinkActive="text-ocs-accent"
-              class="flex-1 flex flex-col items-center gap-0.5 py-2.5 text-ocs-muted text-[10px]"
+              class="flex-1 flex flex-col items-center justify-center gap-1 min-h-[56px] py-2 text-ocs-muted text-[10px] transition-colors duration-200"
             >
-              <span class="text-lg leading-none">🛡️</span>
+              <app-icono nombre="admin" [tamano]="22" />
               <span>Admin</span>
             </a>
           }
@@ -104,12 +122,12 @@ export class ShellComponent {
   readonly carrito = inject(CarritoService);
   private readonly router = inject(Router);
 
-  readonly navegacion = [
-    { ruta: '/', etiqueta: 'Inicio', icono: '📰' },
-    { ruta: '/misiones', etiqueta: 'Misiones', icono: '🎯' },
-    { ruta: '/rangos', etiqueta: 'Rangos', icono: '🏅' },
-    { ruta: '/tienda', etiqueta: 'Comercio', icono: '🛒' },
-    { ruta: '/info', etiqueta: 'Info', icono: '📖' },
+  readonly navegacion: { ruta: string; etiqueta: string; icono: NombreIcono }[] = [
+    { ruta: '/', etiqueta: 'Inicio', icono: 'inicio' },
+    { ruta: '/misiones', etiqueta: 'Misiones', icono: 'misiones' },
+    { ruta: '/rangos', etiqueta: 'Rangos', icono: 'rangos' },
+    { ruta: '/tienda', etiqueta: 'Comercio', icono: 'comercio' },
+    { ruta: '/info', etiqueta: 'Info', icono: 'info' },
   ];
 
   async salir(): Promise<void> {

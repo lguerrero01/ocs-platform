@@ -3,6 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { DatosService } from '../../core/datos.service';
 import { CarritoService } from '../../core/carrito.service';
 import { ArticuloTienda, ConfigMoneda } from '../../core/models';
+import { IconoComponent } from '../../shared/icono.component';
 
 /**
  * Comercio. Cada precio se muestra en USD y en la moneda interna, cuyo valor
@@ -15,7 +16,7 @@ import { ArticuloTienda, ConfigMoneda } from '../../core/models';
  */
 @Component({
   selector: 'app-tienda',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, IconoComponent],
   template: `
     <div class="flex items-start justify-between mb-5">
       <div>
@@ -30,9 +31,12 @@ import { ArticuloTienda, ConfigMoneda } from '../../core/models';
       @if (carrito.cantidadTotal() > 0) {
         <button
           (click)="mostrarCarrito.set(!mostrarCarrito())"
-          class="rounded-lg border border-ocs-accent text-ocs-accent px-3 py-1.5 text-sm shrink-0"
+          [attr.aria-expanded]="mostrarCarrito()"
+          [attr.aria-label]="'Ver pedido, ' + carrito.cantidadTotal() + ' artículos'"
+          class="rounded-lg border border-ocs-accent text-ocs-accent px-3 py-2 text-sm shrink-0 flex items-center gap-2 min-h-[44px] cursor-pointer transition-colors duration-200 hover:bg-ocs-accent/10"
         >
-          🛒 {{ carrito.cantidadTotal() }}
+          <app-icono nombre="carrito" [tamano]="18" />
+          {{ carrito.cantidadTotal() }}
         </button>
       }
     </div>
@@ -50,12 +54,12 @@ import { ArticuloTienda, ConfigMoneda } from '../../core/models';
                 [max]="item.articulo.stock"
                 [value]="item.cantidad"
                 (input)="cambiarCantidad(item.articulo.id, $event)"
-                class="w-16 rounded bg-ocs-bg border border-ocs-border px-2 py-1 text-center"
+                class="w-16 rounded bg-ocs-bg border border-ocs-border-strong px-2 py-1 text-center"
               />
               <span class="w-20 text-right text-ocs-muted">
                 {{ item.articulo.precio_usd * item.cantidad | number: '1.2-2' }} $
               </span>
-              <button (click)="carrito.quitar(item.articulo.id)" class="text-red-400 text-xs">
+              <button (click)="carrito.quitar(item.articulo.id)" class="text-ocs-peligro text-xs">
                 ✕
               </button>
             </div>
@@ -73,7 +77,7 @@ import { ArticuloTienda, ConfigMoneda } from '../../core/models';
           <button
             (click)="confirmarPedido()"
             [disabled]="enviando()"
-            class="rounded-lg bg-ocs-accent text-black px-4 py-2 text-sm font-medium disabled:opacity-50"
+            class="rounded-lg bg-ocs-accent text-ocs-bg px-4 py-2 text-sm font-medium disabled:opacity-50 cursor-pointer transition-colors duration-200 hover:bg-ocs-accent-soft"
           >
             {{ enviando() ? 'Enviando…' : 'Confirmar pedido' }}
           </button>
@@ -82,7 +86,7 @@ import { ArticuloTienda, ConfigMoneda } from '../../core/models';
     }
 
     @if (mensaje()) {
-      <p class="text-sm text-green-400 mb-4">{{ mensaje() }}</p>
+      <p class="text-sm text-ocs-exito mb-4">{{ mensaje() }}</p>
     }
 
     @if (cargando()) {
@@ -116,7 +120,7 @@ import { ArticuloTienda, ConfigMoneda } from '../../core/models';
               @if (a.stock > 0) {
                 <button
                   (click)="carrito.agregar(a)"
-                  class="w-full rounded-lg border border-ocs-accent text-ocs-accent py-2 text-sm"
+                  class="w-full rounded-lg border border-ocs-accent text-ocs-accent py-2 text-sm cursor-pointer transition-colors duration-200 hover:bg-ocs-accent/10"
                 >
                   Agregar
                 </button>

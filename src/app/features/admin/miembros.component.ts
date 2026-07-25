@@ -22,7 +22,7 @@ interface MiembroFila extends Perfil {
       [(ngModel)]="busqueda"
       name="busqueda"
       placeholder="Buscar por nombre o correo…"
-      class="w-full rounded-lg bg-ocs-surface border border-ocs-border px-3 py-2 text-sm mb-4"
+      class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2 text-sm mb-4"
     />
 
     @if (cargando()) {
@@ -44,7 +44,7 @@ interface MiembroFila extends Perfil {
                   class="text-[10px] px-2 py-0.5 rounded-full"
                   [class]="
                     m.estatus === 'activo'
-                      ? 'bg-green-950 text-green-400'
+                      ? 'bg-ocs-exito/15 text-ocs-exito'
                       : 'bg-ocs-bg text-ocs-muted'
                   "
                 >
@@ -64,7 +64,7 @@ interface MiembroFila extends Perfil {
               <select
                 [value]="m.rango_id ?? ''"
                 (change)="cambiarRango(m, $event)"
-                class="text-xs rounded-lg bg-ocs-bg border border-ocs-border px-2 py-1.5"
+                class="text-xs rounded-lg bg-ocs-bg border border-ocs-border-strong px-2 py-1.5"
               >
                 <option value="">Sin rango</option>
                 @for (r of rangos(); track r.id) {
@@ -72,7 +72,7 @@ interface MiembroFila extends Perfil {
                 }
               </select>
 
-              <button (click)="penalizar(m)" class="text-xs text-red-400 px-2 py-1.5">
+              <button (click)="penalizar(m)" class="text-xs text-ocs-peligro px-2 py-1.5">
                 Penalizar
               </button>
 
