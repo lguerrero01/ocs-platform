@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  supabaseUrl: 'https://TU-PROYECTO.supabase.co',
-  supabaseAnonKey: 'TU_ANON_KEY',
-  appUrl: 'https://tu-dominio.com',
+  supabaseUrl: 'https://pquonfituwunglzypsjv.supabase.co',
+  supabaseAnonKey: 'sb_publishable_SGm2y_Jv5yegOMh9qxmbUg_iV9w4s-0',
+  appUrl: 'https://lguerrero01.github.io/ocs-platform',
   geo: {
     required: true,
     refreshMinutes: 0,

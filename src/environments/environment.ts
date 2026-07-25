@@ -10,8 +10,8 @@
  */
 export const environment = {
   production: false,
-  supabaseUrl: 'https://TU-PROYECTO.supabase.co',
-  supabaseAnonKey: 'TU_ANON_KEY',
+  supabaseUrl: 'https://pquonfituwunglzypsjv.supabase.co',
+  supabaseAnonKey: 'sb_publishable_SGm2y_Jv5yegOMh9qxmbUg_iV9w4s-0',
 
   /** URL a la que apuntan los QR de reclutamiento y el enlace de los correos. */
   appUrl: 'http://localhost:4200',
