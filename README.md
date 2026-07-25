@@ -157,6 +157,43 @@ auditoría cubren la parte técnica; la parte documental corre por tu cuenta.
 
 ---
 
+## Despliegue en GitHub Pages
+
+`.github/workflows/deploy-pages.yml` construye y publica en cada push a `main`.
+Para activarlo: *Settings → Pages → Source: **GitHub Actions***.
+
+Dos ajustes que el workflow ya resuelve:
+
+- **`base-href`** se fija al nombre del repo, porque Pages sirve bajo
+  `https://<usuario>.github.io/<repo>/`.
+- **Fallback SPA**: se copia `index.html` a `404.html`. Sin esto, refrescar en
+  `/misiones` daría un 404 — Pages no reescribe rutas hacia el index.
+
+### Antes de publicar, ten en cuenta
+
+**GitHub Pages es un host público.** No existe la opción de un sitio privado en
+los planes gratuitos: si el repo es privado, Pages está deshabilitado; si activas
+Pages, el sitio es accesible para cualquiera que tenga la URL, la indexen los
+buscadores incluida.
+
+Para una organización cerrada eso significa que **la pantalla de login y el
+formulario de registro quedan expuestos a internet**. Los datos siguen protegidos
+por RLS y nadie entra sin un QR válido y sin aprobación manual — pero la
+existencia de la plataforma deja de ser discreta.
+
+Si esa exposición no es aceptable, las alternativas son:
+
+- **Cloudflare Pages / Netlify / Vercel** — despliegue igual de simple, con la
+  opción de proteger el sitio por contraseña o por Cloudflare Access.
+- **Hosting propio** detrás de una VPN o de una allowlist de IPs.
+- **Solo desarrollo local** hasta que la organización decida exponerse.
+
+La `anon key` de Supabase quedará incrustada en el bundle público. Eso es correcto
+por diseño — está pensada para ser pública y RLS es lo que protege los datos. Lo
+que **nunca** debe llegar al repo es la `service_role key`.
+
+---
+
 ## Comandos
 
 ```bash
