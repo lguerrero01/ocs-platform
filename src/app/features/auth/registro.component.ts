@@ -233,8 +233,10 @@ type Paso = 'codigo' | 'advertencia' | 'cuenta' | 'formulario' | 'abandono';
                           [name]="campo.clave"
                           rows="3"
                           [required]="!!campo.requerido"
+                          [attr.aria-invalid]="falta(campo.clave) ? 'true' : null"
                           [(ngModel)]="respuestas[campo.clave]"
-                          class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2"
+                          class="w-full rounded-lg bg-ocs-surface border px-3 py-2"
+                          [class]="falta(campo.clave) ? 'border-ocs-peligro' : 'border-ocs-border-strong'"
                         ></textarea>
                       }
                       @case ('si_no') {
@@ -242,8 +244,10 @@ type Paso = 'codigo' | 'advertencia' | 'cuenta' | 'formulario' | 'abandono';
                           [id]="campo.clave"
                           [name]="campo.clave"
                           [required]="!!campo.requerido"
+                          [attr.aria-invalid]="falta(campo.clave) ? 'true' : null"
                           [(ngModel)]="respuestas[campo.clave]"
-                          class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2 cursor-pointer"
+                          class="w-full rounded-lg bg-ocs-surface border px-3 py-2 cursor-pointer"
+                          [class]="falta(campo.clave) ? 'border-ocs-peligro' : 'border-ocs-border-strong'"
                         >
                           <option value="">Selecciona…</option>
                           <option value="Sí">Sí</option>
@@ -256,8 +260,10 @@ type Paso = 'codigo' | 'advertencia' | 'cuenta' | 'formulario' | 'abandono';
                           [name]="campo.clave"
                           [type]="tipoInput(campo.tipo)"
                           [required]="!!campo.requerido"
+                          [attr.aria-invalid]="falta(campo.clave) ? 'true' : null"
                           [(ngModel)]="respuestas[campo.clave]"
-                          class="w-full rounded-lg bg-ocs-surface border border-ocs-border-strong px-3 py-2"
+                          class="w-full rounded-lg bg-ocs-surface border px-3 py-2"
+                          [class]="falta(campo.clave) ? 'border-ocs-peligro' : 'border-ocs-border-strong'"
                         />
                       }
                     }
@@ -311,6 +317,8 @@ export class RegistroComponent implements OnInit {
   readonly cargando = signal(false);
   readonly error = signal<string | null>(null);
   readonly numeroAspirante = signal<number | null>(null);
+  /** Solo se marcan los campos en rojo después del primer intento de avanzar. */
+  readonly intentado = signal(false);
 
   readonly seccionActual = computed(() => this.secciones[this.indiceSeccion()]);
   readonly esUltimaSeccion = computed(() => this.indiceSeccion() === this.secciones.length - 1);
@@ -411,12 +419,44 @@ export class RegistroComponent implements OnInit {
 
   seccionAnterior(): void {
     this.error.set(null);
+    this.intentado.set(false);
     this.indiceSeccion.update((i) => Math.max(0, i - 1));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  /**
+   * Qué falta por responder en la sección actual.
+   *
+   * La validación es explícita porque Angular pone `novalidate` en el
+   * formulario: el atributo `required` de los campos no bloquea nada por sí
+   * solo, y sin esto la solicitud se envía en blanco.
+   */
+  faltantes(): string[] {
+    return this.seccionActual()
+      .campos.filter((c) => c.requerido && !(this.respuestas[c.clave] ?? '').trim())
+      .map((c) => c.clave);
+  }
+
+  falta(clave: string): boolean {
+    return this.intentado() && this.faltantes().includes(clave);
+  }
+
   /** Avanza de sección, o envía si ya es la última. */
   async siguienteSeccion(): Promise<void> {
+    const faltan = this.faltantes();
+    if (faltan.length) {
+      this.intentado.set(true);
+      this.error.set(
+        faltan.length === 1
+          ? 'Falta una respuesta obligatoria en esta sección.'
+          : `Faltan ${faltan.length} respuestas obligatorias en esta sección.`,
+      );
+      document.getElementById(faltan[0])?.focus();
+      return;
+    }
+
+    this.intentado.set(false);
+
     if (!this.esUltimaSeccion()) {
       this.error.set(null);
       this.indiceSeccion.update((i) => i + 1);

@@ -1,32 +1,119 @@
 @import "tailwindcss";
 
 /**
- * Paleta derivada del logo de la organización.
+ * Paleta oficial de la organización.
  *
- * El emblema existe en dos versiones: dorado (#956d2f) sobre transparente y
- * blanco sobre verde oliva (#4d574e). De ahí salen los dos ejes del tema:
- * el neutro es el oliva de marca llevado a la oscuridad (mismo matiz, 126°),
- * y el acento es el dorado de marca aclarado hasta contrastar sobre él.
+ *   Blanco          #ffffff
+ *   Mostaza         #b78b4c
+ *   Mostaza Oscuro  #654922
+ *   Gris Verdoso    #4d574e
+ *   Marrón          #2b2821
+ *   Negro           #202221
  *
- * Todos los pares de texto verificados superan 7:1 (WCAG AAA):
- *   text/bg 15.9 · muted/bg 7.9 · accent/bg 7.5 · bg sobre botón acento 7.5
+ * Los seis se usan tal cual. Tres tonos intermedios se derivan mezclando dos
+ * de ellos, porque la paleta no trae nada entre el Marrón y el Gris Verdoso y
+ * la interfaz necesita separar fondo, superficie y borde; cada mezcla está
+ * anotada abajo con su receta.
+ *
+ * Contraste verificado sobre el fondo (WCAG AA exige 4.5:1 en texto):
+ *   texto/bg 16.0 · muted/bg 8.3 · acento/bg 5.2 · acento/superficie 4.8
+ *   bg sobre botón acento 5.2 · peligro/bg 5.2 · éxito/bg 6.5
  */
-@theme {
-  --color-ocs-bg: #0e110e;
-  --color-ocs-surface: #181b18;
-  --color-ocs-elevated: #222622;
-  --color-ocs-border: #303631;
-  /** Oliva exacto del logo. Reservado a bordes que deben leerse (campos). */
-  --color-ocs-border-strong: #4d574e;
-  --color-ocs-muted: #9cab9d;
-  --color-ocs-text: #e9ecea;
-  /** Dorado de marca aclarado: mismo matiz (36°), legible sobre el fondo. */
-  --color-ocs-accent: #cb9a4d;
-  --color-ocs-accent-soft: #d9bb8c;
-  /** Dorado original del logo. Solo para superficies grandes, no para texto. */
-  --color-ocs-accent-deep: #956d2f;
-  --color-ocs-exito: #6fbf8b;
-  --color-ocs-peligro: #e8736b;
+/**
+ * Los tokens apuntan a variables que cambian con el tema, y `inline` hace que
+ * Tailwind emita la referencia en vez de resolverla al compilar. Sin eso, el
+ * tema quedaría congelado en el CSS y no podría cambiarse en caliente.
+ */
+@theme inline {
+  --color-ocs-bg: var(--ocs-bg);
+  --color-ocs-surface: var(--ocs-surface);
+  --color-ocs-elevated: var(--ocs-elevated);
+  --color-ocs-border: var(--ocs-border);
+  --color-ocs-border-strong: var(--ocs-border-strong);
+  --color-ocs-muted: var(--ocs-muted);
+  --color-ocs-text: var(--ocs-text);
+  --color-ocs-accent: var(--ocs-accent);
+  --color-ocs-accent-soft: var(--ocs-accent-soft);
+  --color-ocs-accent-deep: var(--ocs-accent-deep);
+  --color-ocs-exito: var(--ocs-exito);
+  --color-ocs-peligro: var(--ocs-peligro);
+}
+
+/**
+ * Tema oscuro. Es el predeterminado: la organización opera de noche y una
+ * pantalla clara a oscuras delata a quien la mira.
+ *
+ * Contraste sobre el fondo (WCAG AA exige 4.5:1 en texto):
+ *   texto 16.0 · muted 8.3 · acento 5.2 · peligro 5.2 · éxito 6.5
+ *   fondo sobre botón de acento 5.2
+ */
+:root,
+:root[data-tema="oscuro"] {
+  color-scheme: dark;
+
+  --ocs-bg: #202221;              /* Negro */
+  --ocs-surface: #2b2821;         /* Marrón */
+  --ocs-elevated: #32312a;        /* Marrón + 20% Gris Verdoso */
+  --ocs-border: #343a35;          /* Negro + 45% Gris Verdoso */
+  --ocs-border-strong: #4d574e;   /* Gris Verdoso */
+  /* Gris Verdoso aclarado: el puro se queda en 2.1:1 sobre el fondo. */
+  --ocs-muted: #b8bcb8;
+  --ocs-text: #ffffff;            /* Blanco */
+  --ocs-accent: #b78b4c;          /* Mostaza */
+  --ocs-accent-soft: #c9a879;     /* Mostaza + 25% Blanco (hover) */
+  --ocs-accent-deep: #654922;     /* Mostaza Oscuro — solo superficies */
+  --ocs-exito: #8fae92;
+  --ocs-peligro: #cf7d6f;
+}
+
+/**
+ * Tema claro. Misma paleta, roles intercambiados: el Blanco pasa a ser fondo y
+ * el Negro, texto.
+ *
+ * El acento cambia de Mostaza a Mostaza Oscuro porque el Mostaza sobre blanco
+ * contrasta 3.1:1 — vale para una forma grande, no para texto ni para un botón
+ * con texto encima. El Mostaza Oscuro llega a 8.3:1, y el Mostaza queda como
+ * `accent-deep`, para superficies.
+ *
+ * Contraste sobre el fondo:
+ *   texto 16.0 · muted 7.5 · acento 8.3 · peligro 6.5 · éxito 6.0
+ *   fondo sobre botón de acento 8.3
+ */
+:root[data-tema="claro"] {
+  color-scheme: light;
+
+  --ocs-bg: #ffffff;              /* Blanco */
+  --ocs-surface: #f4f5f4;         /* Blanco + 6% Gris Verdoso */
+  --ocs-elevated: #eceeec;        /* Blanco + 10% Gris Verdoso */
+  --ocs-border: #d3d5d4;          /* Blanco + 25% Gris Verdoso */
+  --ocs-border-strong: #4d574e;   /* Gris Verdoso */
+  --ocs-muted: #4d574e;           /* Gris Verdoso — 7.5:1 sobre blanco */
+  --ocs-text: #202221;            /* Negro */
+  --ocs-accent: #654922;          /* Mostaza Oscuro */
+  --ocs-accent-soft: #574122;     /* Mostaza Oscuro + 20% Negro (hover) */
+  --ocs-accent-deep: #b78b4c;     /* Mostaza — solo superficies */
+  --ocs-exito: #4a6b50;
+  --ocs-peligro: #9e3f33;
+}
+
+/* Sin elección explícita, manda el sistema. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema]) {
+    color-scheme: light;
+
+    --ocs-bg: #ffffff;
+    --ocs-surface: #f4f5f4;
+    --ocs-elevated: #eceeec;
+    --ocs-border: #d3d5d4;
+    --ocs-border-strong: #4d574e;
+    --ocs-muted: #4d574e;
+    --ocs-text: #202221;
+    --ocs-accent: #654922;
+    --ocs-accent-soft: #574122;
+    --ocs-accent-deep: #b78b4c;
+    --ocs-exito: #4a6b50;
+    --ocs-peligro: #9e3f33;
+  }
 }
 
 html,
@@ -36,8 +123,8 @@ body {
 
 body {
   margin: 0;
-  background-color: var(--color-ocs-bg);
-  color: var(--color-ocs-text);
+  background-color: var(--ocs-bg);
+  color: var(--ocs-text);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   line-height: 1.6;
@@ -48,7 +135,7 @@ body {
  * pierde sobre fondo oscuro; este usa el acento, que contrasta 7.5:1.
  */
 :focus-visible {
-  outline: 2px solid var(--color-ocs-accent);
+  outline: 2px solid var(--ocs-accent);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -56,6 +143,22 @@ body {
 /* Quien no navega con teclado no ve el anillo al hacer clic. */
 :focus:not(:focus-visible) {
   outline: none;
+}
+
+/**
+ * El emblema es un PNG teñido de Mostaza, pensado para fondo oscuro. Sobre
+ * blanco se queda en 3.1:1 y se ve deslavado, así que en tema claro se oscurece
+ * hasta aproximarse al Mostaza Oscuro. Es un filtro y no un segundo archivo
+ * porque el tema se cambia en caliente y una media query no seguiría al botón.
+ */
+:root[data-tema="claro"] .emblema-ocs {
+  filter: brightness(0.62) saturate(1.15);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema]) .emblema-ocs {
+    filter: brightness(0.62) saturate(1.15);
+  }
 }
 
 /* Respeta el notch en móviles instalados como PWA. */

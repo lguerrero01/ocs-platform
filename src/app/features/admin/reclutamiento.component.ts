@@ -112,7 +112,7 @@ export class AdminReclutamientoComponent implements OnInit {
         await QRCode.toDataURL(enlace, {
           width: 512,
           margin: 2,
-          color: { dark: '#0b0f14', light: '#ffffff' },
+          color: { dark: '#202221', light: '#ffffff' },
         }),
       );
       this.codigos.set((await this.datos.codigosQr()) as CodigoListado[]);

@@ -3,12 +3,17 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { LogoComponent } from '../../shared/logo.component';
+import { TemaToggleComponent } from '../../shared/tema-toggle.component';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, RouterLink, LogoComponent],
+  imports: [FormsModule, RouterLink, LogoComponent, TemaToggleComponent],
   template: `
-    <div class="min-h-screen flex items-center justify-center px-4 py-10">
+    <div class="min-h-screen flex items-center justify-center px-4 py-10 relative">
+      <div class="absolute top-4 right-4">
+        <app-tema-toggle />
+      </div>
+
       <div class="w-full max-w-sm">
         <div class="flex flex-col items-center text-center mb-8">
           <app-logo [tamano]="120" />

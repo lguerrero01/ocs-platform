@@ -4,14 +4,24 @@ import { AuthService } from '../../core/auth.service';
 import { CarritoService } from '../../core/carrito.service';
 import { DatosService } from '../../core/datos.service';
 import { IconoComponent, NombreIcono } from '../../shared/icono.component';
+import { InstalarComponent } from '../../shared/instalar.component';
 import { LogoComponent } from '../../shared/logo.component';
+import { TemaToggleComponent } from '../../shared/tema-toggle.component';
 
 /**
  * Layout principal. Mobile-first: barra inferior en móvil, lateral en escritorio.
  */
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, IconoComponent, LogoComponent],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    IconoComponent,
+    LogoComponent,
+    TemaToggleComponent,
+    InstalarComponent,
+  ],
   template: `
     <div class="min-h-screen md:flex">
       <!-- Barra lateral (escritorio) -->
@@ -75,6 +85,9 @@ import { LogoComponent } from '../../shared/logo.component';
         </nav>
 
         <div class="border-t border-ocs-border pt-3 mt-3">
+          <div class="mb-2">
+            <app-instalar />
+          </div>
           <a
             routerLink="/perfil"
             class="flex items-center gap-2.5 text-sm px-3 py-2 rounded-lg text-ocs-text hover:text-ocs-accent hover:bg-ocs-elevated transition-colors duration-200 cursor-pointer"
@@ -82,6 +95,9 @@ import { LogoComponent } from '../../shared/logo.component';
             <app-icono nombre="perfil" [tamano]="18" />
             <span class="truncate">{{ auth.perfil()?.nombre_usuario }}</span>
           </a>
+          <div class="flex items-center justify-between gap-2 mt-1">
+            <app-tema-toggle />
+          </div>
           <button
             (click)="salir()"
             class="flex items-center gap-2.5 w-full text-xs text-ocs-muted px-3 py-2 rounded-lg hover:text-ocs-text hover:bg-ocs-elevated transition-colors duration-200 cursor-pointer"
@@ -101,13 +117,16 @@ import { LogoComponent } from '../../shared/logo.component';
             <app-logo [tamano]="28" [decorativo]="true" />
             <span class="text-ocs-accent font-semibold tracking-wide">OCS</span>
           </a>
-          <a
-            routerLink="/perfil"
-            class="flex items-center gap-1.5 text-sm text-ocs-muted px-2 py-2 rounded-lg"
-          >
-            <app-icono nombre="perfil" [tamano]="18" />
-            <span class="truncate max-w-32">{{ auth.perfil()?.nombre_usuario }}</span>
-          </a>
+          <div class="flex items-center gap-1">
+            <app-tema-toggle />
+            <a
+              routerLink="/perfil"
+              class="flex items-center gap-1.5 text-sm text-ocs-muted px-2 py-2 rounded-lg"
+            >
+              <app-icono nombre="perfil" [tamano]="18" />
+              <span class="truncate max-w-24">{{ auth.perfil()?.nombre_usuario }}</span>
+            </a>
+          </div>
         </header>
 
         <main class="flex-1 px-4 py-5 pb-24 md:pb-8 md:px-8 max-w-4xl w-full">

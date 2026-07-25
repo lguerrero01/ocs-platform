@@ -3,8 +3,8 @@
   "short_name": "OCS",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0e110e",
-  "theme_color": "#0e110e",
+  "background_color": "#202221",
+  "theme_color": "#202221",
   "orientation": "portrait",
   "icons": [
     {
@@ -23,7 +23,7 @@
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

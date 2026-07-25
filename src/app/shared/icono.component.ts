@@ -12,7 +12,10 @@ export type NombreIcono =
   | 'candado'
   | 'ubicacion'
   | 'reloj'
-  | 'carrito';
+  | 'carrito'
+  | 'sol'
+  | 'luna'
+  | 'instalar';
 
 /**
  * Iconografía de la interfaz.
@@ -94,6 +97,19 @@ export type NombreIcono =
         @case ('reloj') {
           <circle cx="12" cy="12" r="9" />
           <path d="M12 6.5V12l3.5 2" />
+        }
+        @case ('sol') {
+          <circle cx="12" cy="12" r="4.2" />
+          <path d="M12 2v2.2M12 19.8V22M4.2 12H2M22 12h-2.2" />
+          <path d="M5.6 5.6 4 4M20 20l-1.6-1.6M18.4 5.6 20 4M4 20l1.6-1.6" />
+        }
+        @case ('luna') {
+          <path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2" />
+        }
+        @case ('instalar') {
+          <path d="M12 3v11" />
+          <path d="m7.5 10.5 4.5 4.5 4.5-4.5" />
+          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
         }
       }
     </svg>
