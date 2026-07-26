@@ -196,6 +196,30 @@ body {
   }
 }
 
+/**
+ * Diálogo modal.
+ *
+ * Es el `<dialog>` nativo abierto con `showModal()` y no un overlay propio: el
+ * navegador ya atrapa el foco dentro, cierra con Escape, devuelve el foco al
+ * elemento que lo abrió e inertiza el resto de la página. Además lo pinta en la
+ * capa superior, así que no compite con ningún z-index de la aplicación.
+ *
+ * El agente de usuario le pone borde, relleno y un ancho propios; se limpian
+ * aquí para que el aspecto salga solo de las clases del componente.
+ */
+.dialogo-ocs {
+  margin: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  width: min(100vw - 2rem, 24rem);
+}
+
+.dialogo-ocs::backdrop {
+  background: color-mix(in srgb, #202221 72%, transparent);
+}
+
 /* Respeta el notch en móviles instalados como PWA. */
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);

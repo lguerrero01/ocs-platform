@@ -15,7 +15,9 @@ export type NombreIcono =
   | 'carrito'
   | 'sol'
   | 'luna'
-  | 'instalar';
+  | 'instalar'
+  | 'qr'
+  | 'cerrar';
 
 /**
  * Iconografía de la interfaz.
@@ -110,6 +112,17 @@ export type NombreIcono =
           <path d="M12 3v11" />
           <path d="m7.5 10.5 4.5 4.5 4.5-4.5" />
           <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+        }
+        @case ('qr') {
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <path d="M14 14h3v3h-3z" />
+          <path d="M21 14v3M14 21h3M20 20h1" />
+        }
+        @case ('cerrar') {
+          <path d="M6 6l12 12" />
+          <path d="M18 6 6 18" />
         }
       }
     </svg>
